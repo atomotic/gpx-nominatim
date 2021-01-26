@@ -4,8 +4,7 @@ Extract the address of the first trackpoint of a GPX using Nominatim [Reverse Ge
 
 Usage:
 
-    ~ go get github.com/ptrv/go-gpx/...
-    ~ go build gpx-nominatim.go
+    ~ go build 
 
     ~ ./gpx-nominatim {file}.gpx
 
