@@ -11,7 +11,8 @@ import (
 	"github.com/ptrv/go-gpx"
 )
 
-type Osm struct {
+// Nominatim ...
+type Nominatim struct {
 	Address struct {
 		Country     string `json:"country"`
 		CountryCode string `json:"country_code"`
@@ -40,27 +41,27 @@ func main() {
 		return
 	}
 
-	gpxFileArg := args[0]
-	gpxFile, err := gpx.ParseFile(gpxFileArg)
+	gpxfile := args[0]
+	tracks, err := gpx.ParseFile(gpxfile)
 
 	if err != nil {
 		fmt.Println("Error opening gpx file: ", err)
 		return
 	}
 
-	lat := gpxFile.Tracks[0].Segments[0].Waypoints[0].Lat
-	lon := gpxFile.Tracks[0].Segments[0].Waypoints[0].Lon
+	lat := tracks.Tracks[0].Segments[0].Waypoints[0].Lat
+	lon := tracks.Tracks[0].Segments[0].Waypoints[0].Lon
 
-	reverse := fmt.Sprintf("http://nominatim.openstreetmap.org/reverse?format=json&lat=%f&lon=%f&zoom=18&addressdetails=1", lat, lon)
+	reverseAPI := fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=%f&lon=%f&zoom=18&addressdetails=1", lat, lon)
 
-	resp, err := http.Get(reverse)
+	resp, err := http.Get(reverseAPI)
 	if err != nil {
 		log.Fatal("error")
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
-	var s = new(Osm)
-	json.Unmarshal(body, &s)
-	fmt.Print(s.DisplayName)
+	var place Nominatim
+	json.Unmarshal(body, &place)
+	fmt.Println(place.DisplayName)
 }
